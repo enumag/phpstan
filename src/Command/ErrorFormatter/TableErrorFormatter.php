@@ -56,7 +56,13 @@ class TableErrorFormatter implements ErrorFormatter
 
 			$relativeFilePath = $this->relativePathHelper->getRelativePath($file);
 
-			$style->table(['Line', $relativeFilePath], $rows);
+			//$style->table(['Line', $relativeFilePath], $rows);
+
+			echo $file . PHP_EOL;
+			foreach ($errors as $error) {
+				echo str_pad((string) $error->getLine(), 4, ' ', STR_PAD_LEFT) . ' ' . $this->formatLink($file, $error) . PHP_EOL;
+			}
+			echo PHP_EOL;
 		}
 
 		if (count($analysisResult->getNotFileSpecificErrors()) > 0) {
@@ -69,4 +75,13 @@ class TableErrorFormatter implements ErrorFormatter
 		return 1;
 	}
 
+	private function formatLink($file, $error)
+	{
+		return sprintf(
+			"\u{001b}]8;;editor://open/?file=%s&line=%d\u{0007}%s\u{001b}]8;;\u{0007}",
+			$file,
+			$error->getLine(),
+			$error->getMessage()
+		);
+	}
 }
